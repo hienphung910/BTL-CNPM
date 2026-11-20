@@ -53,9 +53,7 @@ public class AuthService {
         String cleanCode = optionalText(studentCode, "Mã sinh viên", MAX_CODE);
         String cleanClass = optionalText(className, "Lớp", MAX_CODE);
 
-        if (users.existsByUsername(cleanUsername)) {
-            throw new AuthException("Tên đăng nhập \"" + cleanUsername + "\" đã tồn tại");
-        }
+        requireNewUsername(cleanUsername);
 
         Student student = new Student(newUserId(), cleanUsername, cleanFullName, cleanCode, cleanClass);
         users.saveWithCredentials(student, passwords.hash(rawPassword));
@@ -64,9 +62,7 @@ public class AuthService {
 
     public User createAccount(User user, String rawPassword) {
         passwords.validate(rawPassword);
-        if (users.existsByUsername(user.getUsername())) {
-            throw new AuthException("Tên đăng nhập \"" + user.getUsername() + "\" đã tồn tại");
-        }
+        requireNewUsername(user.getUsername());
         users.saveWithCredentials(user, passwords.hash(rawPassword));
         return user;
     }
@@ -108,6 +104,12 @@ public class AuthService {
 
     private static String newUserId() {
         return "U-" + UUID.randomUUID().toString().replace("-", "").toUpperCase(Locale.ROOT);
+    }
+
+    private void requireNewUsername(String username) {
+        if (users.existsByUsername(username)) {
+            throw new AuthException("Tên đăng nhập \"" + username + "\" đã tồn tại");
+        }
     }
 
     private String normalizeOrFail(String username) {
