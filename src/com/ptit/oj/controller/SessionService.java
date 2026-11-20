@@ -12,10 +12,11 @@ import java.util.Map;
 public class SessionService {
 
     private static final int TOKEN_BYTES = 32;
+    private static final int SESSION_HOURS = 8;
 
     private Map<String, Session> sessions = new HashMap<>();
     private SecureRandom random = new SecureRandom();
-    private Duration ttl = Duration.ofHours(8);
+    private Duration ttl = Duration.ofHours(SESSION_HOURS);
 
     public static class Session {
         private String userId;
