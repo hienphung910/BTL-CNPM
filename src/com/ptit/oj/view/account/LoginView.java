@@ -19,9 +19,11 @@ import java.awt.event.ActionListener;
 
 public class LoginView extends JFrame implements ActionListener {
 
+    private static final int FIELD_COLUMNS = 18;
+
     private JudgeService service;
-    private JTextField txtUsername = new JTextField(18);
-    private JPasswordField txtPassword = new JPasswordField(18);
+    private JTextField txtUsername = new JTextField(FIELD_COLUMNS);
+    private JPasswordField txtPassword = new JPasswordField(FIELD_COLUMNS);
     private JButton btnLogin = new JButton("Đăng nhập");
     private JButton btnRegister = new JButton("Chưa có tài khoản? Đăng ký");
 

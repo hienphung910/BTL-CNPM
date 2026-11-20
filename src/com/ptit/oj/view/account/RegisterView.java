@@ -20,13 +20,15 @@ import java.awt.event.ActionListener;
 
 public class RegisterView extends JDialog implements ActionListener {
 
+    private static final int FIELD_COLUMNS = 18;
+
     private JudgeService service;
-    private JTextField txtUsername = new JTextField(18);
-    private JTextField txtFullName = new JTextField(18);
-    private JTextField txtStudentCode = new JTextField(18);
-    private JTextField txtClassName = new JTextField(18);
-    private JPasswordField txtPassword = new JPasswordField(18);
-    private JPasswordField txtConfirm = new JPasswordField(18);
+    private JTextField txtUsername = new JTextField(FIELD_COLUMNS);
+    private JTextField txtFullName = new JTextField(FIELD_COLUMNS);
+    private JTextField txtStudentCode = new JTextField(FIELD_COLUMNS);
+    private JTextField txtClassName = new JTextField(FIELD_COLUMNS);
+    private JPasswordField txtPassword = new JPasswordField(FIELD_COLUMNS);
+    private JPasswordField txtConfirm = new JPasswordField(FIELD_COLUMNS);
     private JButton btnCreate = new JButton("Tạo tài khoản");
     private JButton btnBack = new JButton("Đã có tài khoản? Đăng nhập");
     private String createdUsername;
