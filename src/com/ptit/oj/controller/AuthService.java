@@ -10,15 +10,6 @@ import com.ptit.oj.model.User;
 import java.util.Locale;
 import java.util.UUID;
 
-/**
- * Dang ky / dang nhap / phan quyen.
- *
- * Nguyen tac:
- *  - Nguoi dung KHONG bao gio duoc tu chon vai tro: register() luon tao STUDENT.
- *  - Sai ten dang nhap va sai mat khau tra ve cung mot thong bao, de khong lo
- *    tai khoan nao dang ton tai.
- *  - Khong ham nao trong lop nay tra ve hash hoac salt ra ngoai.
- */
 public class AuthService {
 
     private static final int MAX_FULL_NAME = 100;
@@ -34,7 +25,6 @@ public class AuthService {
         this.sessions = sessions;
     }
 
-    /** Ket qua dang nhap: token cua phien + tai khoan tuong ung. */
     public static class LoginResult {
         private String token;
         private User user;
@@ -48,16 +38,12 @@ public class AuthService {
         public User getUser() { return user; }
     }
 
-    /** Loi nghiep vu cua tang xac thuc; giao dien hien nguyen van thong bao nay. */
     public static class AuthException extends RuntimeException {
         public AuthException(String message) {
             super(message);
         }
     }
 
-    // ---------------------------------------------------------------- dang ky
-
-    /** Dang ky tai khoan sinh vien. Vai tro luon la STUDENT, khong nhan tu giao dien. */
     public User register(String username, String rawPassword, String fullName,
                                       String studentCode, String className) {
         String cleanUsername = normalizeOrFail(username);
@@ -76,7 +62,6 @@ public class AuthService {
         return student;
     }
 
-    /** Tao tai khoan cho vai tro bat ky - chi dung khi tao tai khoan mau. */
     public User createAccount(User user, String rawPassword) {
         passwords.validate(rawPassword);
         if (users.existsByUsername(user.getUsername())) {
@@ -86,9 +71,6 @@ public class AuthService {
         return user;
     }
 
-    // -------------------------------------------------------------- dang nhap
-
-    /** Dung ten dang nhap va mat khau thi tao phien dang nhap moi; sai thi nem AuthException. */
     public LoginResult login(String username, String rawPassword) {
         if (username == null || username.trim().isEmpty() || rawPassword == null || rawPassword.isEmpty()) {
             throw new AuthException("Thiếu tên đăng nhập hoặc mật khẩu");
@@ -104,25 +86,16 @@ public class AuthService {
         return new LoginResult(sessions.createToken(user.getId()), user);
     }
 
-    /** Tra ve tai khoan gan voi token, hoac null neu token sai / phien da het han. */
     public User authenticate(String token) {
         String userId = sessions.resolve(token);
         if (userId == null) return null;
         return users.findById(userId);
     }
 
-    /** Dang xuat: huy phien dang nhap. */
     public boolean logout(String token) {
         return sessions.invalidate(token);
     }
 
-    // ------------------------------------------------------- khoi tao he thong
-
-    /**
-     * Tao 5 tai khoan mau neu chua co tai khoan nao: quan tri vien, giang vien va
-     * ba sinh vien, dung chung mot mat khau mau. Cac lan chay sau khong dat lai
-     * mat khau cua ai ca.
-     */
     public boolean seedSampleUsersIfEmpty(String rawPassword) {
         if (users.count() > 0) return false;
         createAccount(new Admin(newUserId(), "admin", "Quản trị hệ thống"), rawPassword);
@@ -132,8 +105,6 @@ public class AuthService {
         createAccount(new Student(newUserId(), "tuanpv", "Phạm Văn Tuấn", "B24DCCN311", "D24CQCN02"), rawPassword);
         return true;
     }
-
-    // -------------------------------------------------------------- tien ich
 
     private static String newUserId() {
         return "U-" + UUID.randomUUID().toString().replace("-", "").toUpperCase(Locale.ROOT);

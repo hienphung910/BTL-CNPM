@@ -17,7 +17,6 @@ import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-/** Cua so dang nhap - cua so dau tien khi mo chuong trinh. */
 public class LoginView extends JFrame implements ActionListener {
 
     private JudgeService service;
@@ -53,7 +52,7 @@ public class LoginView extends JFrame implements ActionListener {
 
         btnLogin.addActionListener(this);
         btnRegister.addActionListener(this);
-        getRootPane().setDefaultButton(btnLogin);       // nhan Enter cung la dang nhap
+        getRootPane().setDefaultButton(btnLogin);
 
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         pack();
@@ -69,7 +68,6 @@ public class LoginView extends JFrame implements ActionListener {
         }
     }
 
-    /** Kiem tra ten dang nhap, mat khau; dung thi mo cua so chinh kem token cua phien vua tao. */
     private void handleLogin() {
         String username = txtUsername.getText();
         String password = new String(txtPassword.getPassword());
@@ -83,10 +81,9 @@ public class LoginView extends JFrame implements ActionListener {
         }
     }
 
-    /** Mo bieu mau dang ky; tao xong thi dien san ten dang nhap vua tao. */
     private void openRegister() {
         RegisterView registerView = new RegisterView(this, service);
-        registerView.setVisible(true);          // hop thoai modal: dung o day den khi dong
+        registerView.setVisible(true);
         String created = registerView.getCreatedUsername();
         if (created != null) {
             txtUsername.setText(created);

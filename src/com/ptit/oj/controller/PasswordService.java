@@ -11,22 +11,9 @@ import java.security.spec.InvalidKeySpecException;
 import java.util.Arrays;
 import java.util.Base64;
 
-/**
- * Bam va kiem tra mat khau. Chi dung API chuan cua JDK, khong them thu vien ngoai.
- *
- *  - PBKDF2WithHmacSHA256: co suc can ep buoc nho so vong lap lon (khac han
- *    MD5/SHA-256 tran, vi hai cai do bam qua nhanh nen do rat de).
- *  - SecureRandom: sinh muoi ngau nhien RIENG cho tung tai khoan, nen hai nguoi
- *    dat cung mat khau van cho ra hai chuoi bam khac nhau (chong rainbow table).
- *  - MessageDigest.isEqual: so sanh theo thoi gian hang so, khong ro ri thong tin
- *    qua thoi gian phan hoi nhu equals() thong thuong.
- *
- * Lop nay KHONG BAO GIO luu, tra ve hay ghi log mat khau goc.
- */
 public class PasswordService {
 
     public static final int MIN_PASSWORD_LENGTH = 8;
-    /** Chan tren de khong ai bat chuong trinh bam mot chuoi khong lo. */
     public static final int MAX_PASSWORD_LENGTH = 128;
 
     private static final String ALGORITHM = "PBKDF2WithHmacSHA256";
@@ -34,10 +21,8 @@ public class PasswordService {
     private static final int KEY_BITS = 256;
 
     private SecureRandom random = new SecureRandom();
-    /** So vong lap PBKDF2: cang lon thi do mat khau cang cham. */
     private int iterations = 120_000;
 
-    /** Kiem tra do dai mat khau truoc khi bam. Nem IllegalArgumentException neu sai. */
     public void validate(String rawPassword) {
         if (rawPassword == null || rawPassword.isEmpty()) {
             throw new IllegalArgumentException("Mật khẩu không được rỗng");
@@ -50,7 +35,6 @@ public class PasswordService {
         }
     }
 
-    /** Sinh muoi moi va bam mat khau. */
     public Credentials hash(String rawPassword) {
         validate(rawPassword);
         byte[] salt = new byte[SALT_BYTES];
@@ -66,7 +50,6 @@ public class PasswordService {
         }
     }
 
-    /** So sanh mat khau nguoi dung nhap voi ban ghi trong CSDL. */
     public boolean matches(String rawPassword, Credentials stored) {
         if (rawPassword == null || stored == null) return false;
         if (rawPassword.length() > MAX_PASSWORD_LENGTH) return false;
@@ -76,7 +59,7 @@ public class PasswordService {
             expected = Base64.getDecoder().decode(stored.getHashBase64());
             salt = Base64.getDecoder().decode(stored.getSaltBase64());
         } catch (IllegalArgumentException e) {
-            return false;   // ban ghi hong -> coi nhu sai mat khau, khong lam sap chuong trinh
+            return false;
         }
         byte[] actual = pbkdf2(rawPassword.toCharArray(), salt, stored.getIterations());
         try {
@@ -98,7 +81,6 @@ public class PasswordService {
         }
     }
 
-    /** Chuan hoa username; nem IllegalArgumentException neu khong hop le. */
     public static String normalizeUsername(String username) {
         String u = username == null ? "" : username.trim();
         if (u.length() < 3 || u.length() > 32) {

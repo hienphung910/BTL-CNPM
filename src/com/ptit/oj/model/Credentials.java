@@ -1,12 +1,5 @@
 package com.ptit.oj.model;
 
-/**
- * Thong tin xac thuc cua mot tai khoan: KHONG chua mat khau goc, chi chua
- * chuoi bam PBKDF2 cung muoi va so vong lap da dung de bam.
- *
- * Day la doi tuong gia tri (immutable) nen truyen qua lai giua service va
- * repository ma khong so bi sua trom.
- */
 public class Credentials {
 
     private String hashBase64;

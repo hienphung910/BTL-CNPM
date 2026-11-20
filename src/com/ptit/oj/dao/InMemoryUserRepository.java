@@ -9,16 +9,11 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
-/**
- * Kho tai khoan trong bo nho - dung cho che do --no-db: khong can MySQL,
- * du lieu mat khi tat chuong trinh.
- */
 public class InMemoryUserRepository extends InMemoryRepository<User> implements UserRepository {
 
     private Map<String, Credentials> credentials = new LinkedHashMap<>();
-    private SubmissionRepository submissions;   // de tinh solvedCount
+    private SubmissionRepository submissions;
 
-    /** Gan sau vi hai kho tham chieu vong nhau (user can dem AC tu submission). */
     public void setSubmissionRepository(SubmissionRepository submissions) {
         this.submissions = submissions;
     }
@@ -58,7 +53,6 @@ public class InMemoryUserRepository extends InMemoryRepository<User> implements 
         return result;
     }
 
-    /** Tap ma bai da tung AC - dung Set nen nop AC nhieu lan cung chi tinh mot. */
     private Set<String> solvedProblemIds(String userId) {
         Set<String> solved = new LinkedHashSet<>();
         if (submissions == null || userId == null) return solved;

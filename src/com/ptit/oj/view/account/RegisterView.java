@@ -18,7 +18,6 @@ import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-/** Bieu mau dang ky tai khoan sinh vien, mo tu cua so dang nhap. */
 public class RegisterView extends JDialog implements ActionListener {
 
     private JudgeService service;
@@ -30,7 +29,6 @@ public class RegisterView extends JDialog implements ActionListener {
     private JPasswordField txtConfirm = new JPasswordField(18);
     private JButton btnCreate = new JButton("Tạo tài khoản");
     private JButton btnBack = new JButton("Đã có tài khoản? Đăng nhập");
-    /** Ten dang nhap vua tao; null neu nguoi dung dong bieu mau ma chua dang ky. */
     private String createdUsername;
 
     public RegisterView(Window owner, JudgeService service) {
@@ -83,7 +81,6 @@ public class RegisterView extends JDialog implements ActionListener {
         }
     }
 
-    /** Kiem tra hai lan nhap mat khau roi goi AuthService tao tai khoan. */
     private void handleSubmit() {
         String password = new String(txtPassword.getPassword());
         String confirm = new String(txtConfirm.getPassword());

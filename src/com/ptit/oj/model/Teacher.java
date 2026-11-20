@@ -16,7 +16,4 @@ public class Teacher extends User {
 
     @Override
     public String getRoleCode() { return ROLE_TEACHER; }
-
-    // Khong ghi de canCreateProblem(): tu khi co vai tro ADMIN thi chi Admin
-    // moi duoc tao de bai, giang vien chi xem duoc toan bo lich su nop.
 }

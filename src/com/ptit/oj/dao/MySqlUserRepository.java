@@ -16,22 +16,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-/**
- * Kho tai khoan luu trong MySQL 8.
- *
- * Moi cau lenh deu dung PreparedStatement (chong SQL injection) va
- * try-with-resources (khong ro ri Connection / Statement / ResultSet).
- *
- * Ghi chu ve MySQL:
- *  - Ghi dung mot ban ghi bang INSERT ... ON DUPLICATE KEY UPDATE
- *    (khong phai ON CONFLICT ... DO UPDATE nhu SQLite).
- *  - Cot username dung collation utf8mb4_0900_ai_ci nen phep so sanh "=" va
- *    rang buoc UNIQUE tu dong khong phan biet hoa thuong - khong can COLLATE NOCASE.
- *  - created_at la DATETIME(6): dung setObject/getObject voi LocalDateTime de
- *    gia tri luu trong CSDL dung y nguyen gio dia phuong, khong bi lech mui gio
- *    nhu khi dung setTimestamp (Timestamp la mot moc thoi gian tuyet doi nen
- *    driver se quy doi theo serverTimezone).
- */
 public class MySqlUserRepository implements UserRepository {
 
     private static final String COLUMNS =
@@ -44,9 +28,6 @@ public class MySqlUserRepository implements UserRepository {
         this.database = database;
     }
 
-    // ------------------------------------------------------------------ ghi
-
-    /** Luu tai khoan nhung GIU NGUYEN mat khau cu (dung khi chi sua ho ten...). */
     @Override
     public void save(User user) {
         if (user == null) throw new IllegalArgumentException("Không được lưu entity null");
@@ -92,7 +73,6 @@ public class MySqlUserRepository implements UserRepository {
         }
     }
 
-    /** Xoa tai khoan; bai nop cua ho bay theo nho ON DELETE CASCADE cua InnoDB. */
     @Override
     public boolean deleteById(String id) {
         try (Connection c = database.open();
@@ -104,15 +84,12 @@ public class MySqlUserRepository implements UserRepository {
         }
     }
 
-    // ------------------------------------------------------------------ doc
-
     @Override
     public User findById(String id) {
         if (id == null) return null;
         return queryOne("SELECT " + COLUMNS + " FROM users WHERE id = ?", id);
     }
 
-    /** Collation utf8mb4_0900_ai_ci lo viec so sanh khong phan biet hoa thuong. */
     @Override
     public User findByUsername(String username) {
         if (username == null) return null;
@@ -167,8 +144,6 @@ public class MySqlUserRepository implements UserRepository {
         }
     }
 
-    // ------------------------------------------------------------- thong ke
-
     @Override
     public Map<String, Integer> solvedCountByUser() {
         Map<String, Integer> result = new LinkedHashMap<>();
@@ -182,9 +157,6 @@ public class MySqlUserRepository implements UserRepository {
         return result;
     }
 
-    // ------------------------------------------------------------- tien ich
-
-    /** Tra ve tai khoan dau tien cua ket qua truy van, hoac null neu khong co dong nao. */
     private User queryOne(String sql, String param) {
         try (Connection c = database.open(); PreparedStatement ps = c.prepareStatement(sql)) {
             ps.setString(1, param);
@@ -199,7 +171,6 @@ public class MySqlUserRepository implements UserRepository {
         }
     }
 
-    /** Dua mot dong CSDL ve dung lop con cua User (Student / Teacher / Admin). */
     private User map(ResultSet rs) throws SQLException {
         String id = rs.getString("id");
         String username = rs.getString("username");

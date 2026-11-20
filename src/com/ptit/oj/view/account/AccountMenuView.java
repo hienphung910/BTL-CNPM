@@ -13,11 +13,9 @@ import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-/** Menu tai khoan: ho ten, ten dang nhap, vai tro va nut dang xuat. */
 public class AccountMenuView extends JDialog implements ActionListener {
 
     private JButton btnLogout = new JButton("Đăng xuất");
-    /** true neu nguoi dung da nhan "Dang xuat". */
     private boolean logoutRequested = false;
 
     public AccountMenuView(Window owner, User user) {
