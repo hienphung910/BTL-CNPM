@@ -17,6 +17,7 @@ public class PasswordService {
     public static final int MAX_PASSWORD_LENGTH = 128;
     private static final int MIN_USERNAME_LENGTH = 3;
     private static final int MAX_USERNAME_LENGTH = 32;
+    private static final String USERNAME_PATTERN = "[A-Za-z0-9_.]+";
 
     private static final String ALGORITHM = "PBKDF2WithHmacSHA256";
     private static final int SALT_BYTES = 16;
@@ -89,7 +90,7 @@ public class PasswordService {
             throw new IllegalArgumentException("Tên đăng nhập phải dài "
                     + MIN_USERNAME_LENGTH + "-" + MAX_USERNAME_LENGTH + " ký tự");
         }
-        if (!u.matches("[A-Za-z0-9_.]+")) {
+        if (!u.matches(USERNAME_PATTERN)) {
             throw new IllegalArgumentException("Tên đăng nhập chỉ gồm chữ, số, dấu chấm hoặc gạch dưới");
         }
         return u;
