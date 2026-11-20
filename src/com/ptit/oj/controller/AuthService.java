@@ -14,6 +14,7 @@ public class AuthService {
 
     private static final int MAX_FULL_NAME = 100;
     private static final int MAX_CODE = 40;
+    private static final String INVALID_LOGIN = "Sai tên đăng nhập hoặc mật khẩu";
 
     private UserRepository users;
     private PasswordService passwords;
@@ -73,11 +74,11 @@ public class AuthService {
         }
         User user = users.findByUsername(username.trim());
         if (user == null) {
-            throw new AuthException("Sai tên đăng nhập hoặc mật khẩu");
+            throw new AuthException(INVALID_LOGIN);
         }
         Credentials credentials = users.findCredentials(user.getId());
         if (credentials == null || !passwords.matches(rawPassword, credentials)) {
-            throw new AuthException("Sai tên đăng nhập hoặc mật khẩu");
+            throw new AuthException(INVALID_LOGIN);
         }
         return new LoginResult(sessions.createToken(user.getId()), user);
     }
