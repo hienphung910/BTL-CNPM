@@ -87,11 +87,6 @@ Lần chạy đầu chương trình tạo 5 tài khoản mẫu: `admin` (quản 
 
 Các bảng được tạo tự động khi chương trình khởi động.
 
-## Hạn chế
-
-- Chưa có sandbox, code nộp lên chạy bằng quyền của người dùng đang mở chương trình.
-- Trong lúc chấm, cửa sổ Làm bài phải đứng chờ đến khi chấm xong.
-- Chưa sửa được đề, chưa xoá bài và chưa đổi mật khẩu qua giao diện.
 
 ## Thành viên
 
