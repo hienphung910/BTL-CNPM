@@ -18,15 +18,9 @@ import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-/**
- * Cua so chinh sau khi dang nhap: thanh menu o tren, ben duoi la trang dang xem.
- * Menu "Quan tri" chi co khi tai khoan la quan tri vien.
- */
 public class HomeView extends JFrame implements ActionListener {
-
     private JudgeService service;
     private User user;
-    /** Token cua phien dang nhap; phien het han sau 8 gio. */
     private String token;
 
     private JButton btnProblems = new JButton("Lớp học");
@@ -36,7 +30,6 @@ public class HomeView extends JFrame implements ActionListener {
     private JButton btnAdmin = new JButton("Quản trị");
     private JButton btnAccount;
 
-    /** Vung noi dung: moi trang la mot the, moi luc chi hien mot the. */
     private CardLayout cards = new CardLayout();
     private JPanel content = new JPanel(cards);
 
@@ -68,7 +61,6 @@ public class HomeView extends JFrame implements ActionListener {
         menu.add(btnMySubmissions);
         menu.add(btnLeaderboard);
         if (user.canCreateProblem()) {
-            // Chi quan tri vien moi co trang Quan tri.
             adminPanelView = new AdminPanelView(service, user);
             content.add(adminPanelView, "Quản trị");
             menu.add(btnAdmin);
@@ -114,7 +106,6 @@ public class HomeView extends JFrame implements ActionListener {
         }
     }
 
-    /** Chuyen sang mot trang va nap lai du lieu cua trang do. Phien het han thi quay ve dang nhap. */
     public void setPage(String page) {
         if (service.getAuth().authenticate(token) == null) {
             Ui.error(this, "Phiên đăng nhập đã hết hạn. Mời bạn đăng nhập lại.");
@@ -139,16 +130,14 @@ public class HomeView extends JFrame implements ActionListener {
         cards.show(content, page);
     }
 
-    /** Mo menu tai khoan; neu nguoi dung nhan "Dang xuat" thi dang xuat. */
     private void openAccountMenu() {
         AccountMenuView accountMenu = new AccountMenuView(this, user);
-        accountMenu.setVisible(true);           // hop thoai modal: dung o day den khi dong
+        accountMenu.setVisible(true);
         if (accountMenu.isLogoutRequested()) {
             logout();
         }
     }
 
-    /** Dang xuat: huy phien, mo lai cua so dang nhap roi dong cua so chinh. */
     private void logout() {
         service.getAuth().logout(token);
         statusView.stopAutoRefresh();

@@ -4,26 +4,17 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-/** Mot bai tap tren he thong. */
 public class Problem extends Entity {
-
     private String title;
     private String statement;
     private long timeLimitMs;
     private int memoryLimitMb;
-    private String comparatorSpec;   // "exact" | "token" | "lines" | "float:1e-6"
-    /** Ma chu de trong lo trinh hoc (data/topics.txt), "" neu bai chua phan loai. */
+    private String comparatorSpec;
     private String topic;
-    /** 1 = De, 2 = Vua, 3 = Kho; 0 = chua danh gia. */
     private int difficulty;
-    /**
-     * Thu tu hoc trong chu de (khoa "order" trong problem.properties, tuy chon).
-     * 0 = khong khai bao: bai dung sau cac bai co thu tu va xep theo ma bai.
-     */
     private int order;
     private List<TestCase> testCases = new ArrayList<>();
 
-    /** Bai chua phan loai: khong thuoc chu de nao, chua danh gia do kho. */
     public Problem(String id, String title, String statement,
                    long timeLimitMs, int memoryLimitMb, String comparatorSpec) {
         this(id, title, statement, timeLimitMs, memoryLimitMb, comparatorSpec, "", 0, 0);
@@ -47,7 +38,6 @@ public class Problem extends Entity {
         testCases.add(tc);
     }
 
-    /** Tra ve ban sao khong sua duoc -> bao ve trang thai noi bo (encapsulation). */
     public List<TestCase> getTestCases() {
         return Collections.unmodifiableList(testCases);
     }
@@ -61,7 +51,6 @@ public class Problem extends Entity {
     public int getDifficulty() { return difficulty; }
     public int getOrder() { return order; }
 
-    /** Tong diem toi da cua bai = tong diem cac test. */
     public double getMaxPoints() {
         double sum = 0;
         for (TestCase tc : testCases) sum += tc.getPoints();

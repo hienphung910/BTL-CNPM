@@ -1,6 +1,5 @@
 package com.ptit.oj.dao;
 
-/** Nem ra khi doc de bai / bo test tu o dia bi loi. */
 public class ProblemLoadException extends RuntimeException {
     private static final long serialVersionUID = 1L;
 

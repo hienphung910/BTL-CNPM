@@ -1,8 +1,6 @@
 package com.ptit.oj.model;
 
-/** Mot bo test: input + output mong doi + diem. */
 public class TestCase extends Entity {
-
     private String input;
     private String expectedOutput;
     private double points;

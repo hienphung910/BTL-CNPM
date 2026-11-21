@@ -24,13 +24,7 @@ import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Trang "Quan tri" (chi quan tri vien): bang bai tap theo thu tu lo trinh, nut tao
- * bai moi va o "Sua" tren tung dong de doi chu de, do kho.
- */
 public class AdminPanelView extends JPanel implements ActionListener {
-
-    /** Vi tri cot "Thao tac" trong bang. */
     private static final int EDIT_COLUMN = 6;
 
     private JudgeService service;
@@ -38,12 +32,10 @@ public class AdminPanelView extends JPanel implements ActionListener {
 
     private JButton btnAdd = new JButton("Add Problem");
     private JComboBox<String> cboTopic = new JComboBox<>();
-    /** Khoa cua tung muc trong hop chon chu de: "" = tat ca, ma chu de, hoac OTHER_TOPIC. */
     private List<String> topicKeys = new ArrayList<>();
     private JTable table = Ui.table(
             new String[] {"Mã", "Tên bài", "Chủ đề", "Độ khó", "Giới hạn", "Điểm", "Thao tác"});
     private JLabel lblEmpty = new JLabel(" ");
-    /** Cac bai dang hien trong bang, cung thu tu voi cac dong. */
     private List<Problem> shown = new ArrayList<>();
 
     public AdminPanelView(JudgeService service, User user) {
@@ -99,7 +91,6 @@ public class AdminPanelView extends JPanel implements ActionListener {
         }
     }
 
-    /** Nap lai bang bai tap cua chu de dang chon, xep theo lo trinh. */
     public void load() {
         List<Topic> topics = service.getTopics();
         String key = "";
@@ -127,7 +118,6 @@ public class AdminPanelView extends JPanel implements ActionListener {
         }
     }
 
-    /** Viet diem gon: 100.0 thanh "100", 12.5 giu nguyen "12.5". */
     private String formatPoints(double points) {
         if (points == Math.floor(points)) {
             return String.valueOf((long) points);
@@ -135,14 +125,12 @@ public class AdminPanelView extends JPanel implements ActionListener {
         return String.valueOf(points);
     }
 
-    /** Mo bieu mau "New Problem"; dong lai thi nap lai bang de thay bai vua tao. */
     private void openEditor() {
         ProblemEditorView editor = new ProblemEditorView(SwingUtilities.getWindowAncestor(this), service, user);
-        editor.setVisible(true);            // hop thoai modal: dung o day den khi dong
+        editor.setVisible(true);
         load();
     }
 
-    /** Mo hop thoai "Sua bai trong lo trinh" cua mot bai. */
     private void openMetaEditor(Problem problem) {
         ProblemMetaEditorView editor =
                 new ProblemMetaEditorView(SwingUtilities.getWindowAncestor(this), service, user, problem);

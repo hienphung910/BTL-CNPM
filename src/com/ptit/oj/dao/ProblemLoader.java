@@ -16,26 +16,13 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Properties;
 
-/**
- * Doc de bai va bo test tu o dia. Cau truc mot bai:
- *
- *   data/problems/P001/
- *       problem.properties   (id, title, timeLimitMs, memoryLimitMb, comparator, totalPoints,
- *                             topic, difficulty va order - tuy chon, xem data/topics.txt)
- *       statement.txt        (de bai, tuy chon)
- *       tests/01.in  01.out  02.in  02.out ...
- *
- * Test co ten bat dau bang "sample" duoc coi la test vi du (hien thi cho thi sinh).
- */
 public class ProblemLoader {
-
     private Path problemsDir;
 
     public ProblemLoader(Path problemsDir) {
         this.problemsDir = problemsDir;
     }
 
-    /** Doc toan bo cac bai trong thu muc, sap xep theo ma bai. */
     public List<Problem> loadAll() {
         if (!Files.isDirectory(problemsDir)) {
             throw new ProblemLoadException("Không thấy thư mục đề bài: " + problemsDir.toAbsolutePath());
@@ -47,8 +34,7 @@ public class ProblemLoader {
         }
         for (File dir : dirs) {
             if (!dir.isDirectory()) continue;
-            // Bo qua thu muc tam do ProblemWriter dang dung de ghi bai moi,
-            // va cac thu muc an cua he thong / IDE.
+
             String name = dir.getName();
             if (name.startsWith(ProblemWriter.TEMP_PREFIX) || name.startsWith(".")) continue;
             problems.add(load(dir.toPath()));
@@ -62,15 +48,13 @@ public class ProblemLoader {
         return problems;
     }
 
-    /** Doc mot bai tu thu muc cua no. */
     public Problem load(Path dir) {
         Path configFile = dir.resolve("problem.properties");
         if (!Files.isRegularFile(configFile)) {
             throw new ProblemLoadException("Thiếu problem.properties trong " + dir);
         }
         Properties config = new Properties();
-        // Doc bang UTF-8 (khong dung Properties.load(InputStream) vi ban do mac dinh ISO-8859-1
-        // se lam sai tieng Viet co dau trong title), dong thoi loc BOM neu co.
+
         try (Reader reader = new StringReader(readText(configFile))) {
             config.load(reader);
         } catch (IOException e) {
@@ -87,7 +71,7 @@ public class ProblemLoader {
         int difficulty = (int) parseLong(config.getProperty("difficulty"), 0);
         if (difficulty < 0 || difficulty > 3) difficulty = 0;
         long order = parseLong(config.getProperty("order"), 0);
-        if (order < 0 || order > 9999) order = 0;        // ngoai khoang 1..9999 coi nhu khong khai bao
+        if (order < 0 || order > 9999) order = 0;
         String statement = readTextIfExists(dir.resolve("statement.txt"));
 
         Problem problem = new Problem(id, title, statement, timeLimit, memoryLimit, comparator,
@@ -121,7 +105,7 @@ public class ProblemLoader {
         for (File f : files) {
             if (f.getName().toLowerCase().endsWith(".in")) inputs.add(f.toPath());
         }
-        // Test vi du (sample*) chay truoc, sau do den cac test an, moi nhom sap theo ten.
+
         Collections.sort(inputs, new Comparator<Path>() {
             @Override
             public int compare(Path a, Path b) {
@@ -139,7 +123,6 @@ public class ProblemLoader {
 
     private String readText(Path file) {
         try {
-            // stripBom: file test tao bang Notepad co BOM se lam sai ket qua so sanh
             return TextUtils.stripBom(new String(Files.readAllBytes(file), StandardCharsets.UTF_8));
         } catch (IOException e) {
             throw new ProblemLoadException("Không đọc được file " + file, e);
