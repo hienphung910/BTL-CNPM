@@ -6,13 +6,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-/**
- * Kho lich su nop bai trong bo nho - dung cho che do --no-db.
- * Khong co transaction that vi tat ca nam trong mot cau truc du lieu duy nhat.
- */
 public class InMemorySubmissionRepository extends InMemoryRepository<Submission>
         implements SubmissionRepository {
-
     @Override
     public void saveWithResults(Submission submission) {
         save(submission);

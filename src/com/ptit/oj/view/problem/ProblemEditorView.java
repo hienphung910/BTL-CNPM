@@ -26,13 +26,7 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Bieu mau "New Problem" cua quan tri vien: thong tin bai tap va danh sach test
- * (test vi du va test an). Moi luat kiem tra du lieu nam o ProblemAdminService.
- */
 public class ProblemEditorView extends JDialog implements ActionListener {
-
-    /** Mot test trong bieu mau: loai (vi du / an), ten, input, output mong doi va nut xoa. */
     private static class TestRow {
         boolean sample;
         JTextField txtName = new JTextField(10);
@@ -48,7 +42,7 @@ public class ProblemEditorView extends JDialog implements ActionListener {
     private JTextField txtId = new JTextField();
     private JTextField txtTitle = new JTextField();
     private JComboBox<String> cboTopic = new JComboBox<>();
-    /** Ma chu de cua tung muc trong hop chon; "" = chua phan loai. */
+
     private List<String> topicIds = new ArrayList<>();
     private JComboBox<String> cboDifficulty = new JComboBox<>(new String[] {"Chưa đánh giá", "Dễ", "Vừa", "Khó"});
     private JTextArea txtStatement = new JTextArea(5, 50);
@@ -78,7 +72,6 @@ public class ProblemEditorView extends JDialog implements ActionListener {
             cboTopic.addItem(t.getName());
         }
 
-        // ---- thong tin bai tap: moi dong mot nhan va mot o nhap
         JPanel form = new JPanel(new GridLayout(0, 2, 8, 6));
         form.add(new JLabel("Mã bài"));
         form.add(txtId);
@@ -107,7 +100,6 @@ public class ProblemEditorView extends JDialog implements ActionListener {
         info.add(form, BorderLayout.NORTH);
         info.add(scrStatement, BorderLayout.CENTER);
 
-        // ---- danh sach test: ban dau co mot test vi du va mot test an con trong
         JPanel testBar = new JPanel(new FlowLayout(FlowLayout.LEFT, 6, 2));
         testBar.add(btnAddSample);
         testBar.add(btnAddHidden);
@@ -152,7 +144,6 @@ public class ProblemEditorView extends JDialog implements ActionListener {
         } else if (e.getSource() == btnCancel) {
             dispose();
         } else {
-            // Con lai la nut "Xoa" cua mot test: tim xem nut do thuoc test nao.
             for (TestRow row : tests) {
                 if (e.getSource() == row.btnRemove) {
                     removeTest(row);
@@ -162,7 +153,6 @@ public class ProblemEditorView extends JDialog implements ActionListener {
         }
     }
 
-    /** Them mot test vao bieu mau; ten goi y la sample01, sample02... hoac 01, 02... */
     private void addTest(boolean sample) {
         int sameKind = 0;
         for (TestRow t : tests) {
@@ -202,7 +192,6 @@ public class ProblemEditorView extends JDialog implements ActionListener {
         pnlTests.revalidate();
     }
 
-    /** Bo mot test khoi bieu mau. */
     private void removeTest(TestRow row) {
         tests.remove(row);
         pnlTests.remove(row.panel);
@@ -210,7 +199,6 @@ public class ProblemEditorView extends JDialog implements ActionListener {
         pnlTests.repaint();
     }
 
-    /** Doc cac o nhap thanh ban thao bai tap; o so khong phai la so thi bao loi. */
     private ProblemDraft readForm() {
         ProblemDraft draft = new ProblemDraft();
         draft.setId(txtId.getText());
@@ -237,7 +225,6 @@ public class ProblemEditorView extends JDialog implements ActionListener {
         }
     }
 
-    /** Tao bai tap: ProblemAdminService kiem tra, ghi ra o dia va nap vao bo nho. */
     private void doCreate() {
         try {
             ProblemDraft draft = readForm();

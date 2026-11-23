@@ -1,22 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--
-  Maven lam ba viec cho project nay:
-    1. Quan ly dependency MySQL Connector/J (tai ve va do vao thu muc lib/),
-    2. Bien dich ma nguon Java 11,
-    3. Chay kiem thu don vi JUnit 5 trong thu muc test/ (JUnit chi o scope test,
-       khong bi chep vao lib/).
 
-  Cau truc thu muc cua bai tap lon duoc GIU NGUYEN:
-    - sourceDirectory tro thang vao src/ (khong phai src/main/java),
-    - testSourceDirectory la test/ (nam ngoai src/ de javac trong README khong dung toi),
-    - outputDirectory la out/ (dung thu muc ma lenh javac trong README dung),
-  nen bien dich bang Maven hay bang javac deu cho ket qua giong nhau.
-
-  Lenh thuong dung:
-    mvn -q clean compile          -> bien dich vao out/ va tai lib/mysql-connector-j-*.jar
-    mvn -q dependency:copy-dependencies   -> chi tai thu vien ve lib/
-    mvn test                      -> chay JUnit (NetBeans: Run > Test Project, Alt+F6)
--->
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
@@ -40,19 +23,13 @@
   </properties>
 
   <dependencies>
-    <!--
-      Dependency ngoai DUY NHAT cua project: trinh dieu khien JDBC cua MySQL.
-      Ban 8.4.0 la ban on dinh, chay tot tren JDK 11 va MySQL 8.x, va khong keo
-      theo thu vien bat buoc nao khac (protobuf chi can cho X DevAPI - pham vi
-      provided - nen classpath khi chay chi co dung mot file jar).
-    -->
+
     <dependency>
       <groupId>com.mysql</groupId>
       <artifactId>mysql-connector-j</artifactId>
       <version>${mysql.connector.version}</version>
     </dependency>
 
-    <!-- Kiem thu don vi: chi dung khi chay test, khong co trong ban phat hanh -->
     <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter</artifactId>
@@ -62,7 +39,7 @@
   </dependencies>
 
   <build>
-    <!-- Giu nguyen cau truc thu muc san co thay vi ep theo chuan Maven -->
+
     <sourceDirectory>src</sourceDirectory>
     <testSourceDirectory>test</testSourceDirectory>
     <outputDirectory>out</outputDirectory>
@@ -70,7 +47,7 @@
     <directory>target</directory>
 
     <plugins>
-      <!-- Chay JUnit 5; thu muc lam viec la goc project de doc duoc .env va data/ -->
+
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
@@ -90,7 +67,6 @@
         </configuration>
       </plugin>
 
-      <!-- Do thu vien vao lib/ de chay duoc bang lenh java trong README, khong can Maven -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-dependency-plugin</artifactId>

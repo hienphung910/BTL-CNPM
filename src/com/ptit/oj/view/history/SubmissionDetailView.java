@@ -13,12 +13,7 @@ import javax.swing.JTextArea;
 import java.awt.BorderLayout;
 import java.awt.Window;
 
-/**
- * Hop thoai chi tiet mot bai nop: ket qua cham (verdict, so test dung, diem, bang
- * tung test), ngon ngu, nguoi nop va ma nguon chi doc. Dong bang nut × cua cua so.
- */
 public class SubmissionDetailView extends JDialog {
-
     private JudgeResultView resultView = new JudgeResultView();
     private JLabel lblInfo = new JLabel(" ");
     private JTextArea txtSource = new JTextArea(12, 70);
@@ -46,7 +41,6 @@ public class SubmissionDetailView extends JDialog {
         setLocationRelativeTo(owner);
     }
 
-    /** Dua mot bai nop len hop thoai. */
     public void setDetail(Submission submission) {
         setTitle(submission.getProblem().getId() + " — " + submission.getProblem().getTitle());
         resultView.setResult(submission);

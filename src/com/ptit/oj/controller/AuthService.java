@@ -11,7 +11,6 @@ import java.util.Locale;
 import java.util.UUID;
 
 public class AuthService {
-
     private static final int MAX_FULL_NAME = 100;
     private static final int MAX_CODE = 40;
     private static final String INVALID_LOGIN = "Sai tên đăng nhập hoặc mật khẩu";

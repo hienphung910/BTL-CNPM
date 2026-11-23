@@ -7,19 +7,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Locale;
 
-/**
- * Quan ly ket noi toi MySQL 8.
- *
- * Nguyen tac:
- *  - KHONG giu mot Connection dung chung toan cuc. Moi thao tac tu mo mot ket noi
- *    roi dong ngay bang try-with-resources, nen luong cham bai va luong giao dien
- *    khong bao gio dam nhau tren cung mot ket noi.
- *  - KHONG BAO GIO ghi mat khau ra log hay ra thong bao loi (xem maskUrl()).
- *  - Moi SQLException duoc boc thanh DataAccessException voi thong bao tieng Viet
- *    de nguoi dung biet phai sua gi, thay vi doc stack trace cua driver.
- */
 public class MySqlDatabaseManager {
-
     private String url;
     private String user;
     private String password;
@@ -48,10 +36,6 @@ public class MySqlDatabaseManager {
         }
     }
 
-    /**
-     * Mo mot ket noi moi. Nguoi goi PHAI dong bang try-with-resources.
-     * Ket noi mac dinh o che do autocommit; noi nao can transaction thi tu tat.
-     */
     public Connection open() {
         try {
             return DriverManager.getConnection(url, user, password);
@@ -60,7 +44,6 @@ public class MySqlDatabaseManager {
         }
     }
 
-    /** Kiem tra ket noi bang SELECT 1 - goi luc khoi dong de bao loi som va rõ ràng. */
     public void testConnection() {
         try (Connection c = open();
              Statement st = c.createStatement();
@@ -73,7 +56,6 @@ public class MySqlDatabaseManager {
         }
     }
 
-    /** URL da che phan nhay cam - dung khi in ra man hinh hoac ghi log. */
     public String getSafeUrl() {
         return maskUrl(url);
     }
@@ -87,12 +69,6 @@ public class MySqlDatabaseManager {
         return "MySqlDatabaseManager{user=" + user + ", url=" + getSafeUrl() + "}";
     }
 
-    // ------------------------------------------------------------- tien ich
-
-    /**
-     * Xoa moi tham so co the chua thong tin nhay cam (password, user) khoi URL
-     * truoc khi in ra. Chi giu lai phan host/port/ten CSDL.
-     */
     public static String maskUrl(String jdbcUrl) {
         if (jdbcUrl == null) return "";
         int question = jdbcUrl.indexOf('?');
@@ -100,7 +76,6 @@ public class MySqlDatabaseManager {
         return question < 0 ? base : base + "?...";
     }
 
-    /** Bien loi cua driver thanh cau tieng Viet noi ro phai sua gi. */
     private String friendlyMessage(SQLException e) {
         String state = e.getSQLState() == null ? "" : e.getSQLState();
         String raw = e.getMessage() == null ? "" : e.getMessage().toLowerCase(Locale.ROOT);

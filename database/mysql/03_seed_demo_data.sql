@@ -1,31 +1,7 @@
--- =====================================================================
---  CodeHub - DU LIEU MAU DE THUC HANH SQL
--- =====================================================================
---  File nay do cong cu sinh tu dong - KHONG sua tay.
---
---  Cach nap:
---      mysql -u oj_app -p online_judge < database/mysql/03_seed_demo_data.sql
---
---  Yeu cau: da chay 02_schema.sql (hoac da khoi dong ung dung mot lan)
---  de cac bang ton tai san.
---
---  Chay lai nhieu lan an toan: dung INSERT ... ON DUPLICATE KEY UPDATE
---  nen khong tao ban ghi trung.
---
---  Mat khau moi tai khoan mau: ptit@2026
--- =====================================================================
-
--- BAT BUOC: file nay chua ten tieng Viet co dau (UTF-8).
--- Tren Windows, mysql.exe mac dinh khai bao charset la codepage cua console
--- (thuong cp850/cp437) nen server se hieu sai byte UTF-8 -> ten bi loi thanh
--- "Nguyễn" => "Nguyß╗àn". Dong SET NAMES duoi day sua dut diem loi do,
--- bat ke nap file bang cach nao.
 SET NAMES utf8mb4;
 
 START TRANSACTION;
 
--- 12 sinh vien + 2 giang vien. Mat khau chung: ptit@2026
--- Moi tai khoan co MUOI RIENG nen password_hash khac nhau hoan toan.
 INSERT INTO users
     (id, username, full_name, role, student_code, class_name, department,
      password_hash, password_salt, password_iterations, created_at)
@@ -46,10 +22,6 @@ VALUES
     ('U-SEED-GV02', 'gv02', 'Phan Thu Trang', 'TEACHER', NULL, NULL, 'Công nghệ phần mềm', 'V5aAaJAo5+karkpc40l4jfsLwoMGk0QpMmeIRRWJc0I=', 'Q2FcDAJHFaprHbpc+gzBSg==', 120000, '2026-07-03 08:01:00')
 ON DUPLICATE KEY UPDATE full_name = VALUES(full_name);
 
--- Bai nop cua 12 sinh vien, trai tren khoang 2 tuan.
--- Trinh do tung sinh vien khac nhau -> ti le AC va xep hang phan hoa ro.
--- Luu y: bai CE KHONG co dong nao trong test_case_results
--- (bien dich loi thi khong test nao duoc chay) - rat huu ich de tap JOIN.
 INSERT INTO submissions
     (id, user_id, problem_id, problem_title, language, file_name, source_code,
      submitted_at, verdict, score, max_points, max_runtime_ms, judge_time_ms, global_message)
@@ -1464,7 +1436,6 @@ ON DUPLICATE KEY UPDATE verdict = VALUES(verdict);
 
 COMMIT;
 
--- Kiem tra nhanh sau khi nap:
 SELECT
     (SELECT COUNT(*) FROM users)             AS so_tai_khoan,
     (SELECT COUNT(*) FROM submissions)       AS so_bai_nop,

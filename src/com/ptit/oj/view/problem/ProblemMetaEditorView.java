@@ -21,15 +21,13 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
 
-/** Hop thoai "Sua bai trong lo trinh": doi chu de va do kho cua mot bai da co. */
 public class ProblemMetaEditorView extends JDialog implements ActionListener {
-
     private JudgeService service;
     private User user;
     private Problem problem;
 
     private JComboBox<String> cboTopic = new JComboBox<>();
-    /** Ma chu de cua tung muc trong hop chon; "" = bai khac (chua phan loai). */
+
     private List<String> topicIds = new ArrayList<>();
     private JComboBox<String> cboDifficulty = new JComboBox<>(new String[] {"Chưa đánh giá", "Dễ", "Vừa", "Khó"});
     private JButton btnSave = new JButton("Lưu thay đổi");
@@ -47,7 +45,7 @@ public class ProblemMetaEditorView extends JDialog implements ActionListener {
             topicIds.add(t.getId());
             cboTopic.addItem(t.getName());
         }
-        // Chon san chu de va do kho hien tai cua bai.
+
         int topicIndex = topicIds.indexOf(problem.getTopic());
         if (topicIndex < 0) topicIndex = 0;
         cboTopic.setSelectedIndex(topicIndex);
@@ -88,7 +86,6 @@ public class ProblemMetaEditorView extends JDialog implements ActionListener {
         }
     }
 
-    /** Luu chu de va do kho moi; loi (vi du chu de khong co trong lo trinh) thi bao va o lai hop thoai. */
     private void save() {
         String topicId = topicIds.get(cboTopic.getSelectedIndex());
         int difficulty = cboDifficulty.getSelectedIndex();

@@ -18,7 +18,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class LoginView extends JFrame implements ActionListener {
-
     private static final int FIELD_COLUMNS = 18;
 
     private JudgeService service;

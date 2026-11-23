@@ -10,7 +10,6 @@ import java.util.List;
 import java.util.Map;
 
 public class SessionService {
-
     private static final int TOKEN_BYTES = 32;
     private static final int SESSION_HOURS = 8;
 

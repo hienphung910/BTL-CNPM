@@ -19,7 +19,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class RegisterView extends JDialog implements ActionListener {
-
     private static final int FIELD_COLUMNS = 18;
 
     private JudgeService service;

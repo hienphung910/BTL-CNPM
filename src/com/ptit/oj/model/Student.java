@@ -1,7 +1,6 @@
 package com.ptit.oj.model;
 
 public class Student extends User {
-
     private String studentCode;
     private String className;
 

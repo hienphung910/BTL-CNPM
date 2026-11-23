@@ -5,24 +5,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-/**
- * Tao bang / view cho MySQL neu chua co. Chay moi lan khoi dong.
- *
- * An toan khi goi lai nhieu lan (idempotent) va KHONG BAO GIO xoa du lieu cu:
- * chi dung CREATE TABLE IF NOT EXISTS, con VIEW thi kiem tra information_schema
- * roi moi tao khi thieu. Khong co DROP TABLE hay TRUNCATE o day.
- *
- * MySQL khong ho tro CREATE INDEX IF NOT EXISTS, nen moi index deu duoc khai
- * bao ngay ben trong CREATE TABLE - vua chay lai duoc, vua de doc.
- *
- * Ban SQL nguyen van cua luoc do nay nam o database/mysql/02_schema.sql.
- */
 public class MySqlSchemaInitializer {
-
     private static final String[] STATEMENTS = {
-
-        // username dung collation utf8mb4_0900_ai_ci nen UNIQUE tu dong khong
-        // phan biet hoa thuong (thay cho COLLATE NOCASE cua SQLite truoc day).
         "CREATE TABLE IF NOT EXISTS users ("
       + "  id                  VARCHAR(64)  NOT NULL,"
       + "  username            VARCHAR(32)  NOT NULL,"
@@ -81,10 +65,6 @@ public class MySqlSchemaInitializer {
       + ") ENGINE=InnoDB DEFAULT CHARACTER SET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci"
     };
 
-    /**
-     * "So bai lam duoc" = so bai KHAC NHAU tung co it nhat mot lan nop AC.
-     * Nop AC 5 lan cho cung mot bai van chi tinh la 1 nho COUNT(DISTINCT ...).
-     */
     private static final String CREATE_USER_STATS_VIEW =
         "CREATE VIEW user_stats AS "
       + "SELECT u.id       AS user_id,"
@@ -120,14 +100,6 @@ public class MySqlSchemaInitializer {
         }
     }
 
-    /**
-     * Tao VIEW user_stats neu chua co.
-     *
-     * MySQL khong co "CREATE VIEW IF NOT EXISTS", con "CREATE OR REPLACE VIEW" thi
-     * doi hoi quyen DROP - ma tai khoan ung dung CO Y khong duoc cap quyen do tren
-     * CSDL that. Vi vay hoi information_schema truoc roi chi tao khi thieu: vua chay
-     * lai duoc nhieu lan, vua khong can them quyen nguy hiem nao.
-     */
     private void createUserStatsViewIfMissing(Statement st) throws SQLException {
         try (ResultSet rs = st.executeQuery(USER_STATS_EXISTS)) {
             if (rs.next() && rs.getLong(1) > 0) return;

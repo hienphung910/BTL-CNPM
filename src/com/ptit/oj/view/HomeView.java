@@ -19,7 +19,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class HomeView extends JFrame implements ActionListener {
-
     private JudgeService service;
     private User user;
     private String token;

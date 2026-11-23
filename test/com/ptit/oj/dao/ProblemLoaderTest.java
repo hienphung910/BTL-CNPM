@@ -1,7 +1,3 @@
-/*
- * Kiem thu don vi (JUnit 5) cho ProblemLoader - Module 2: Quan ly bai tap va lo trinh hoc.
- * Moi phuong thuc test ung voi mot dong trong bang 6.1 cua bao cao, dung thu tu.
- */
 package com.ptit.oj.dao;
 
 import com.ptit.oj.model.Problem;
@@ -23,13 +19,8 @@ import org.junit.jupiter.api.TestMethodOrder;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
-/**
- * Kiem thu viec doc bai tap tu o dia.
- * Test dau doc thu muc that data/problems; cac test con lai tu tao mot thu muc tam roi xoa di.
- */
 @TestMethodOrder(MethodOrderer.MethodName.class)
 public class ProblemLoaderTest {
-
     private Path tempDir;
     private ProblemLoader instance;
 
@@ -44,10 +35,6 @@ public class ProblemLoaderTest {
         deleteRecursively(tempDir.toFile());
     }
 
-    /**
-     * Test of loadAll method, of class ProblemLoader.
-     * Thu muc data/problems co 603 bai: tra ve du 603 Problem.
-     */
     @Test
     public void test01_LoadAll_ThuMucThat603Bai() {
         System.out.println("loadAll - thu muc data/problems co 603 bai");
@@ -58,17 +45,12 @@ public class ProblemLoaderTest {
         List<Problem> result = realLoader.loadAll();
 
         assertEquals(603, result.size());
-        assertEquals("K001", result.get(0).getId());      // danh sach sap theo ma bai
+        assertEquals("K001", result.get(0).getId());
         for (Problem p : result) {
-            assertFalse(p.getTestCases().isEmpty());      // bai nao cung co it nhat mot test
+            assertFalse(p.getTestCases().isEmpty());
         }
     }
 
-    /**
-     * Test of load method, of class ProblemLoader.
-     * Thu muc co problem.properties, statement.txt va 2 cap test: tra ve Problem voi
-     * 2 TestCase, test sampleXX duoc danh dau la vi du.
-     */
     @Test
     public void test02_Load_ThuMucHopLe() throws IOException {
         System.out.println("load - thu muc co du problem.properties, statement.txt va 2 cap test");
@@ -94,18 +76,14 @@ public class ProblemLoaderTest {
 
         List<TestCase> tests = result.getTestCases();
         assertEquals(2, tests.size());
-        assertEquals("sample01", tests.get(0).getId());   // test vi du dung truoc test an
+        assertEquals("sample01", tests.get(0).getId());
         assertTrue(tests.get(0).isSample());
         assertEquals("01", tests.get(1).getId());
         assertFalse(tests.get(1).isSample());
-        assertEquals(50.0, tests.get(0).getPoints(), 0.001);   // 100 diem chia deu cho 2 test
+        assertEquals(50.0, tests.get(0).getPoints(), 0.001);
         assertEquals(100.0, result.getMaxPoints(), 0.001);
     }
 
-    /**
-     * Test of load method, of class ProblemLoader.
-     * Thieu problem.properties hoac thieu file .out: nem ProblemLoadException.
-     */
     @Test
     public void test03_Load_ThieuTep() throws IOException {
         System.out.println("load - thieu problem.properties hoac thieu file .out");
@@ -131,7 +109,6 @@ public class ProblemLoaderTest {
         }
     }
 
-    /** Tao thu muc <tempDir>/<id>/tests va tra ve thu muc bai. */
     private Path createProblemDir(String id) throws IOException {
         Path dir = tempDir.resolve(id);
         Files.createDirectories(dir.resolve("tests"));

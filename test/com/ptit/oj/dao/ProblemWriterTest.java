@@ -1,7 +1,3 @@
-/*
- * Kiem thu don vi (JUnit 5) cho ProblemWriter - Module 2: Quan ly bai tap va lo trinh hoc.
- * Moi phuong thuc test ung voi mot dong trong bang 6.1 cua bao cao, dung thu tu.
- */
 package com.ptit.oj.dao;
 
 import com.ptit.oj.model.Problem;
@@ -23,13 +19,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 import static org.junit.jupiter.api.Assertions.*;
 
-/**
- * Kiem thu viec ghi bai tap moi xuong o dia va sua tep problem.properties cua bai da co.
- * Moi test lam viec trong mot thu muc tam rieng, xong thi xoa di, khong dung toi data/problems.
- */
 @TestMethodOrder(MethodOrderer.MethodName.class)
 public class ProblemWriterTest {
-
     private Path tempDir;
     private ProblemWriter instance;
 
@@ -44,14 +35,6 @@ public class ProblemWriterTest {
         deleteRecursively(tempDir.toFile());
     }
 
-    // ================================================================
-    // 2. Tao bai tap - exists(), write()
-    // ================================================================
-
-    /**
-     * Test of exists method, of class ProblemWriter.
-     * Ma bai da co thu muc: tra ve true; ma bai chua co: tra ve false.
-     */
     @Test
     public void test01_Exists() throws IOException {
         System.out.println("exists - ma bai da co thu muc va ma bai chua co");
@@ -61,11 +44,6 @@ public class ProblemWriterTest {
         assertFalse(instance.exists("P901"));
     }
 
-    /**
-     * Test of write method, of class ProblemWriter.
-     * Ban thao hop le: tao thu muc <id> gom problem.properties, statement.txt va
-     * tests/<ten>.in, .out cho tung test; khong con thu muc tam.
-     */
     @Test
     public void test02_Write_BanThaoHopLe() throws IOException {
         System.out.println("write - ban thao hop le");
@@ -81,12 +59,10 @@ public class ProblemWriterTest {
         assertEquals("10 20\n", readText(result.resolve("tests").resolve("01.in")));
         assertEquals("30\n", readText(result.resolve("tests").resolve("01.out")));
 
-        // Khong con thu muc tam: trong thu muc goc chi co dung thu muc P900.
         File[] children = tempDir.toFile().listFiles();
         assertEquals(1, children.length);
         assertEquals("P900", children[0].getName());
 
-        // Bai vua ghi doc lai duoc bang ProblemLoader, dung noi dung da nhap.
         Problem loaded = new ProblemLoader(tempDir).load(result);
         assertEquals("P900", loaded.getId());
         assertEquals("Tổng hai số", loaded.getTitle());
@@ -97,10 +73,6 @@ public class ProblemWriterTest {
         assertTrue(loaded.getTestCases().get(0).isSample());
     }
 
-    /**
-     * Test of write method, of class ProblemWriter.
-     * Thu muc da ton tai: nem IOException, khong ghi de bai cu.
-     */
     @Test
     public void test03_Write_ThuMucDaTonTai() throws IOException {
         System.out.println("write - thu muc bai da ton tai");
@@ -114,20 +86,10 @@ public class ProblemWriterTest {
             assertTrue(expected.getMessage().contains("P900"));
         }
 
-        // Bai cu con nguyen va khong sot lai thu muc tam nao.
         assertEquals(before, readText(tempDir.resolve("P900").resolve("problem.properties")));
         assertEquals(1, tempDir.toFile().listFiles().length);
     }
 
-    // ================================================================
-    // 3. Sua bai trong lo trinh - updateProperties()
-    // ================================================================
-
-    /**
-     * Test of updateProperties method, of class ProblemWriter.
-     * Doi difficulty tu 1 thanh 2: dong difficulty duoc ghi lai, cac dong khac giu nguyen
-     * thu tu va noi dung.
-     */
     @Test
     public void test04_UpdateProperties_DoiDoKho() throws IOException {
         System.out.println("updateProperties - doi difficulty tu 1 thanh 2");
@@ -147,14 +109,10 @@ public class ProblemWriterTest {
         assertEquals("topic=lam-quen", lines.get(3));
         assertEquals("difficulty=2", lines.get(4));
         assertEquals("order=3", lines.get(5));
-        // Khong sot lai tep tam trong thu muc bai.
+
         assertEquals(1, result.toFile().listFiles().length);
     }
 
-    /**
-     * Test of updateProperties method, of class ProblemWriter.
-     * changes co gia tri null cho khoa order: dong order bi xoa khoi tep.
-     */
     @Test
     public void test05_UpdateProperties_XoaDongOrder() throws IOException {
         System.out.println("updateProperties - gia tri null thi xoa dong");
@@ -173,10 +131,6 @@ public class ProblemWriterTest {
         assertEquals("difficulty=1", lines.get(3));
     }
 
-    /**
-     * Test of updateProperties method, of class ProblemWriter.
-     * Ma bai khong co thu muc: nem IOException.
-     */
     @Test
     public void test06_UpdateProperties_MaBaiKhongCoThuMuc() {
         System.out.println("updateProperties - ma bai khong co thu muc");
@@ -189,14 +143,9 @@ public class ProblemWriterTest {
         } catch (IOException expected) {
             assertTrue(expected.getMessage().contains("P999"));
         }
-        assertFalse(instance.exists("P999"));     // khong tu tao thu muc moi
+        assertFalse(instance.exists("P999"));
     }
 
-    // ================================================================
-    // Du lieu mau
-    // ================================================================
-
-    /** Ban thao mot bai co 2 test: sample01 la test vi du, 01 la test an. */
     private ProblemDraft createDraft(String id, String title) {
         ProblemDraft draft = new ProblemDraft();
         draft.setId(id);
@@ -213,7 +162,6 @@ public class ProblemWriterTest {
         return draft;
     }
 
-    /** Tao thu muc bai chi co tep problem.properties voi noi dung cho truoc. */
     private Path createPropertiesFile(String id, String content) throws IOException {
         Path dir = tempDir.resolve(id);
         Files.createDirectory(dir);

@@ -14,7 +14,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class AccountMenuView extends JDialog implements ActionListener {
-
     private JButton btnLogout = new JButton("Đăng xuất");
     private boolean logoutRequested = false;
 

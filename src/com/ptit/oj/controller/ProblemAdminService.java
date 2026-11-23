@@ -18,17 +18,9 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
-/**
- * Nghiep vu quan tri de bai: kiem tra hop le -> ghi ra o dia -> nap vao bo nho.
- *
- * Giao dien chi viec gom du lieu vao ProblemDraft roi goi createProblem(); moi luat
- * kiem tra nam o day nen du goi tu dau thi du lieu cung duoc bao ve giong het.
- */
 public class ProblemAdminService {
-
-    /** Ma bai: chi chu IN HOA, so, gach duoi va gach ngang -> khong the thanh duong dan. */
     private static final String ID_PATTERN = "[A-Z0-9_-]{1,32}";
-    /** Ten test: chu thuong/hoa, so, gach duoi, gach ngang. Khong co dau cham hay dau gach cheo. */
+
     private static final String TEST_NAME_PATTERN = "[A-Za-z0-9_-]{1,64}";
 
     private static final long MIN_TIME_LIMIT_MS = 100;
@@ -44,7 +36,7 @@ public class ProblemAdminService {
     private Repository<Problem> problems;
     private ProblemWriter writer;
     private ProblemLoader loader;
-    /** Lo trinh hoc cua JudgeService (cung mot danh sach, duoc nap sau constructor). */
+
     private List<Topic> topics;
 
     public ProblemAdminService(Repository<Problem> problems, Path problemsDir, List<Topic> topics) {
@@ -54,7 +46,6 @@ public class ProblemAdminService {
         this.topics = topics;
     }
 
-    /** Ma chu de co trong lo trinh hay khong. */
     private boolean topicExists(String id) {
         for (Topic t : topics) {
             if (t.getId().equals(id)) return true;
@@ -62,17 +53,12 @@ public class ProblemAdminService {
         return false;
     }
 
-    /** Loi nghiep vu khi tao hoac sua bai tap; giao dien hien nguyen van thong bao nay. */
     public static class ProblemAdminException extends RuntimeException {
         public ProblemAdminException(String message) {
             super(message);
         }
     }
 
-    /**
-     * Tao bai tap moi. Chi tai khoan co canCreateProblem() == true moi duoc goi
-     * (giao dien da an menu Quan tri, day la lop chan thu hai - khong tin giao dien).
-     */
     public Problem createProblem(User actor, ProblemDraft draft) {
         if (actor == null || !actor.canCreateProblem()) {
             throw new ProblemAdminException("Chỉ tài khoản quản trị mới được tạo bài tập");
@@ -86,14 +72,11 @@ public class ProblemAdminService {
             throw new ProblemAdminException("Không ghi được bài tập ra ổ đĩa: " + e.getMessage());
         }
 
-        // Nap lai tu chinh file vua ghi: bao dam thu muc tren o dia va du lieu
-        // trong bo nho luon khop nhau, va bat som neu ghi ra thu bi loi.
         Problem problem = loader.load(dir);
         problems.save(problem);
         return problem;
     }
 
-    /** Doi chu de va do kho cua mot bai DA CO; cac dong khac cua problem.properties giu nguyen. */
     public Problem updateProblemMeta(User actor, String rawId, String rawTopic, int difficulty) {
         if (actor == null || !actor.canCreateProblem()) {
             throw new ProblemAdminException("Chỉ tài khoản quản trị mới được sửa bài tập");
@@ -106,15 +89,13 @@ public class ProblemAdminService {
         String topic = validateTopic(rawTopic);
         validateDifficulty(difficulty);
 
-        // Gia tri null = xoa dong do khoi file, giong luc tao bai khong chon chu de / do kho.
         Map<String, String> changes = new LinkedHashMap<>();
         changes.put("topic", topic.isEmpty() ? null : topic);
         changes.put("difficulty", difficulty > 0 ? String.valueOf(difficulty) : null);
         if (!topic.equals(current.getTopic())) {
-            changes.put("order", null);     // sang chu de khac: bo thu tu cu, bai xep theo ma bai
+            changes.put("order", null);
         }
         try {
-            // Ghi ra o dia roi nap lai tu chinh file vua ghi, nhu createProblem().
             Problem problem = loader.load(writer.updateProperties(id, changes));
             problems.save(problem);
             return problem;
@@ -122,8 +103,6 @@ public class ProblemAdminService {
             throw new ProblemAdminException("Không ghi được bài tập ra ổ đĩa: " + e.getMessage());
         }
     }
-
-    // ------------------------------------------------------------ kiem tra
 
     private void validate(ProblemDraft d) {
         String id = normalizeId(d.getId());
@@ -148,7 +127,7 @@ public class ProblemAdminService {
 
         String comparator = d.getComparator() == null ? "token" : d.getComparator().trim();
         try {
-            ComparatorFactory.create(comparator);       // nem neu kieu so sanh khong ho tro
+            ComparatorFactory.create(comparator);
         } catch (IllegalArgumentException e) {
             throw new ProblemAdminException(e.getMessage());
         }
@@ -170,7 +149,6 @@ public class ProblemAdminService {
         }
     }
 
-    /** Tra ve ma chu de da cat khoang trang; "" = chua phan loai (nhom "Bai khac"). */
     private String validateTopic(String rawTopic) {
         String topic = rawTopic == null ? "" : rawTopic.trim();
         if (!topic.isEmpty() && !topicExists(topic)) {
@@ -190,14 +168,14 @@ public class ProblemAdminService {
         if (name.isEmpty()) {
             throw new ProblemAdminException("Tên test không được để trống");
         }
-        // Chan truoc cac dang duong dan de thong bao loi noi dung ro rang.
+
         if (name.contains("..") || name.contains("/") || name.contains("\\")) {
             throw new ProblemAdminException("Tên test \"" + name + "\" chứa ký tự đường dẫn");
         }
         if (!name.matches(TEST_NAME_PATTERN)) {
             throw new ProblemAdminException("Tên test \"" + name + "\" chỉ được gồm chữ, số, gạch dưới hoặc gạch ngang");
         }
-        // He thong file cua Windows khong phan biet hoa thuong -> "01" va "01" phai coi la trung.
+
         if (!seen.add(name.toLowerCase(Locale.ROOT))) {
             throw new ProblemAdminException("Tên test \"" + name + "\" bị trùng");
         }

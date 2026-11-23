@@ -13,12 +13,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-/**
- * Tinh bang xep hang: moi nguoi lay diem CAO NHAT tren tung bai, roi cong lai.
- * Tang lop service chi lam nghiep vu, khong lam I/O va khong lam cham bai.
- */
 public class ScoreboardService {
-
     private Repository<Submission> submissions;
     private Repository<Problem> problems;
 
@@ -27,7 +22,6 @@ public class ScoreboardService {
         this.problems = problems;
     }
 
-    /** Mot dong trong bang xep hang. */
     public static class Row {
         private User user;
         private Map<String, Double> bestPerProblem;
@@ -50,16 +44,6 @@ public class ScoreboardService {
         public double getTotal() { return total; }
     }
 
-    /**
-     * Sai so cho phep khi so sanh "da dat diem toi da chua".
-     *
-     * Vi sao khong dung 1e-9: diem tung test luu trong MySQL o kieu DECIMAL(12,4),
-     * nen mot bai 100 diem chia cho 3 test se thanh 3 x 33.3333 = 99.9999 khi doc
-     * lai - lech 0.0001 so voi 100. Voi sai so 1e-9 thi bai da giai tron ven lai bi
-     * dem thanh CHUA giai. Moi test lech toi da 0.00005, gioi han 200 test/bai
-     * (xem ProblemAdminService.MAX_TESTS) nen 0.01 la nguong an toan va vẫn du chat
-     * de khong nham mot bai thieu diem thanh dat diem toi da.
-     */
     private static final double SCORE_EPSILON = 0.01;
 
     public List<Row> buildScoreboard() {
@@ -69,7 +53,7 @@ public class ScoreboardService {
         for (Submission s : submissions.findAll()) {
             if (!s.isJudged()) continue;
             User u = s.getAuthor();
-            if (!best.containsKey(u)) {             // lan dau gap nguoi nay
+            if (!best.containsKey(u)) {
                 best.put(u, new LinkedHashMap<>());
                 attempts.put(u, 0);
             }
@@ -95,7 +79,6 @@ public class ScoreboardService {
             rows.add(new Row(e.getKey(), e.getValue(), attempts.get(e.getKey()), solved, total));
         }
 
-        // Tong diem giam dan; bang diem thi it lan nop hon xep truoc; van bang thi theo ten dang nhap.
         Collections.sort(rows, new Comparator<Row>() {
             @Override
             public int compare(Row a, Row b) {

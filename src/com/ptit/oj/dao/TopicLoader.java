@@ -11,21 +11,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-/**
- * Doc lo trinh hoc tu data/topics.txt. Moi dong mot chu de, theo dung thu tu hoc:
- *
- *   # dong bat dau bang # la ghi chu
- *   vong-lap | Vong lap | Lap lai mot viec nhieu lan voi for va while. | Nhap mon
- *
- * Cot thu 4 (tuy chon) la ten lop hoc: cac chu de cung ten lop thuoc cung mot lop,
- * lop nao xuat hien truoc thi dung truoc.
- *
- * Khong co file thi tra ve danh sach rong: lo trinh la tuy chon, he thong
- * van chay nhu cu (moi bai nam o nhom "Bai khac").
- */
 public class TopicLoader {
-
-    /** Ma chu de: chu thuong khong dau, so va gach ngang -> an toan khi dat trong URL / properties. */
     public static final String ID_PATTERN = "[a-z0-9-]{1,40}";
 
     private Path file;

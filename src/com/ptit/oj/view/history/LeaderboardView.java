@@ -19,19 +19,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-/**
- * Trang "Xep hang": buc top 3 va bang xep hang, tinh tu toan bo bai nop da cham.
- * Thu tu do ScoreboardService quyet dinh: tong diem giam dan, so lan nop tang dan,
- * ten dang nhap.
- */
 public class LeaderboardView extends JPanel {
-
     private static final Color GOLD = new Color(0xB8860B);
     private static final Color SILVER = new Color(0x757575);
     private static final Color BRONZE = new Color(0xA0522D);
 
     private JudgeService service;
-    /** Buc top 3: toi da ba the dung canh nhau, moi the la mot nguoi dung dau. */
+
     private JPanel pnlTop3 = new JPanel(new GridLayout(1, 3, 8, 0));
     private JTable table = Ui.table(new String[] {"Hạng", "Sinh viên", "Mã SV", "Đã giải"});
     private JLabel lblEmpty = new JLabel(" ");
@@ -51,7 +45,6 @@ public class LeaderboardView extends JPanel {
         add(lblEmpty, BorderLayout.SOUTH);
     }
 
-    /** Tinh lai bang xep hang, ve lai buc top 3 va dua cac dong len bang. */
     public void load() {
         List<ScoreboardService.Row> ranking = service.buildScoreboard();
         Map<String, Integer> solvedByUser = service.getSolvedCountByUser();
@@ -62,7 +55,6 @@ public class LeaderboardView extends JPanel {
             User u = ranking.get(i).getUser();
             int rank = i + 1;
 
-            // Chi sinh vien moi co ma sinh vien.
             String studentCode = "—";
             if (u instanceof Student) {
                 studentCode = ((Student) u).getStudentCode();
@@ -79,7 +71,6 @@ public class LeaderboardView extends JPanel {
         }
         Ui.setRows(table, rows);
 
-        // Chua co bai nop nao duoc cham thi khong co buc top 3.
         pnlTop3.setVisible(!ranking.isEmpty());
         pnlTop3.revalidate();
         pnlTop3.repaint();
@@ -90,7 +81,6 @@ public class LeaderboardView extends JPanel {
         }
     }
 
-    /** Tao the cua mot nguoi trong top 3: huy chuong, hang, ho ten, ten dang nhap, so bai da giai. */
     private JPanel createTopCard(int rank, User u, int solved) {
         String medal = "Huy chương đồng";
         Color color = BRONZE;

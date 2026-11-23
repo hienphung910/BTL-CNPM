@@ -8,24 +8,11 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-/**
- * Doc cau hinh ket noi MySQL tu BIEN MOI TRUONG (khong bao gio hard-code trong ma nguon).
- *
- *   OJ_DB_URL       jdbc:mysql://localhost:3306/online_judge?...
- *   OJ_DB_USER      oj_app
- *   OJ_DB_PASSWORD  (mat khau cua tai khoan tren)
- *
- * Cho tien khi phat trien, lop nay cung doc file `.env` o thu muc goc neu co.
- * Bien moi truong that LUON duoc uu tien hon file `.env`, va `.env` da nam trong
- * .gitignore nen mat khau khong bao gio bi day len git.
- */
 public class DatabaseConfig {
-
     public static final String ENV_URL = "OJ_DB_URL";
     public static final String ENV_USER = "OJ_DB_USER";
     public static final String ENV_PASSWORD = "OJ_DB_PASSWORD";
 
-    /** Gia tri goi y khi nguoi dung chua dat bien moi truong - chi de in ra huong dan. */
     public static final String SAMPLE_URL =
             "jdbc:mysql://localhost:3306/online_judge"
           + "?useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC"
@@ -47,14 +34,12 @@ public class DatabaseConfig {
     public String getUser() { return user; }
     public String getPassword() { return password; }
 
-    /** Bao thieu cau hinh, kem huong dan dat bien moi truong. */
     public static class MissingConfigException extends RuntimeException {
         public MissingConfigException(String message) {
             super(message);
         }
     }
 
-    /** Doc cau hinh; nem MissingConfigException (kem huong dan) neu thieu URL hoac ten tai khoan. */
     public static DatabaseConfig fromEnvironment() {
         String url = value(ENV_URL);
         String user = value(ENV_USER);
@@ -71,7 +56,6 @@ public class DatabaseConfig {
         return new DatabaseConfig(url.trim(), user.trim(), password == null ? "" : password);
     }
 
-    /** Bien moi truong that truoc, sau do moi den file .env. */
     private static String value(String key) {
         String fromEnv = System.getenv(key);
         if (!isBlank(fromEnv)) return fromEnv;
@@ -80,10 +64,6 @@ public class DatabaseConfig {
         return dotEnv().get(key);
     }
 
-    /**
-     * Doc file `.env` mot lan. Cu phap don gian: KEY=VALUE, bo qua dong trong va dong
-     * bat dau bang '#'. Khong ho tro chuoi nhieu dong - du dung cho vai bien cau hinh.
-     */
     private static Map<String, String> dotEnv() {
         if (dotEnv != null) return dotEnv;
         dotEnv = new LinkedHashMap<>();
@@ -106,7 +86,6 @@ public class DatabaseConfig {
                 dotEnv.put(key, val);
             }
         } catch (IOException e) {
-            // Khong doc duoc .env thi coi nhu khong co - bien moi truong van dung binh thuong.
             System.err.println("Không đọc được file .env: " + e.getMessage());
         }
         return dotEnv;
@@ -116,7 +95,6 @@ public class DatabaseConfig {
         return s == null || s.trim().isEmpty();
     }
 
-    /** Khong bao gio in mat khau. */
     @Override
     public String toString() {
         return "DatabaseConfig{user=" + user + ", url=" + MySqlDatabaseManager.maskUrl(url) + "}";

@@ -10,7 +10,6 @@ import java.util.Map;
 import java.util.Set;
 
 public class InMemoryUserRepository extends InMemoryRepository<User> implements UserRepository {
-
     private Map<String, Credentials> credentials = new LinkedHashMap<>();
     private SubmissionRepository submissions;
 

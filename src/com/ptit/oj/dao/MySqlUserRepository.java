@@ -17,7 +17,6 @@ import java.util.List;
 import java.util.Map;
 
 public class MySqlUserRepository implements UserRepository {
-
     private static final String COLUMNS =
             "id, username, full_name, role, student_code, class_name, department, "
           + "password_hash, password_salt, password_iterations, created_at";

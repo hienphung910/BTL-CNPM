@@ -1,7 +1,3 @@
-/*
- * Kiem thu don vi (JUnit 5) cho TopicLoader - Module 2: Quan ly bai tap va lo trinh hoc.
- * Moi phuong thuc test ung voi mot dong trong bang 6.1 cua bao cao, dung thu tu.
- */
 package com.ptit.oj.dao;
 
 import com.ptit.oj.model.Topic;
@@ -23,13 +19,8 @@ import org.junit.jupiter.api.TestMethodOrder;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
-/**
- * Kiem thu viec doc lo trinh hoc tu tep topics.txt.
- * Test dau doc tep that data/topics.txt; cac test con lai tu ghi mot tep tam roi xoa di.
- */
 @TestMethodOrder(MethodOrderer.MethodName.class)
 public class TopicLoaderTest {
-
     private Path tempFile;
 
     @BeforeEach
@@ -42,10 +33,6 @@ public class TopicLoaderTest {
         Files.deleteIfExists(tempFile);
     }
 
-    /**
-     * Test of loadAll method, of class TopicLoader.
-     * Tep topics.txt co 36 dong hop le: tra ve 36 Topic dung thu tu, order tu 1 den 36.
-     */
     @Test
     public void test01_LoadAll_TepThat36ChuDe() {
         System.out.println("loadAll - tep data/topics.txt co 36 chu de");
@@ -61,13 +48,9 @@ public class TopicLoaderTest {
             assertEquals(i + 1, result.get(i).getOrder());
             ids.add(result.get(i).getId());
         }
-        assertEquals(36, ids.size());      // khong co ma chu de nao bi trung
+        assertEquals(36, ids.size());
     }
 
-    /**
-     * Test of loadAll method, of class TopicLoader.
-     * Tep co dong trong va dong bat dau bang #: cac dong do bi bo qua, order khong bi nhay.
-     */
     @Test
     public void test02_LoadAll_BoQuaDongTrongVaGhiChu() throws IOException {
         System.out.println("loadAll - bo qua dong trong va dong ghi chu");
@@ -91,13 +74,9 @@ public class TopicLoaderTest {
         assertEquals(2, result.get(1).getOrder());
         assertEquals("mang", result.get(2).getId());
         assertEquals(3, result.get(2).getOrder());
-        assertEquals("", result.get(2).getDescription());   // cot bo trong thi la chuoi rong
+        assertEquals("", result.get(2).getDescription());
     }
 
-    /**
-     * Test of loadAll method, of class TopicLoader.
-     * Ma chu de bi trung hoac thieu ten: nem ProblemLoadException.
-     */
     @Test
     public void test03_LoadAll_MaTrungHoacThieuTen() throws IOException {
         System.out.println("loadAll - ma chu de bi trung hoac thieu ten");

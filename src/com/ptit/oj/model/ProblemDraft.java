@@ -4,14 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-/**
- * Ban thao mot bai tap sap duoc ghi ra o dia (do admin gui len).
- *
- * Day chi la tui du lieu - moi phep kiem tra hop le do ProblemAdminService lam
- * TRUOC khi giao cho ProblemWriter, nen writer khong bao gio ghi du lieu ban.
- */
 public class ProblemDraft {
-
     private String id;
     private String title;
     private String statement;
@@ -23,7 +16,6 @@ public class ProblemDraft {
     private int difficulty = 0;
     private List<TestDraft> tests = new ArrayList<>();
 
-    /** Mot bo test trong ban thao. */
     public static class TestDraft {
         private String name;
         private String input;

@@ -3,23 +3,12 @@ package com.ptit.oj.controller.judge;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * So sánh output theo từng dòng, phù hợp với bài vẽ hình bằng ký tự.
- * Giữ khoảng trắng đầu dòng; bỏ khoảng trắng cuối dòng và các dòng rỗng ở cuối output.
- */
 public class LineComparator implements OutputComparator {
-
-    /**
-     * Chuẩn hóa mỗi output thành danh sách dòng rồi so sánh hai danh sách.
-     */
     @Override
     public boolean matches(String expected, String actual) {
         return lines(expected).equals(lines(actual));
     }
 
-    /**
-     * Thông báo khác số dòng hoặc dòng sai đầu tiên, không tiết lộ dòng đáp án.
-     */
     @Override
     public String explain(String expected, String actual) {
         List<String> e = lines(expected);
@@ -35,9 +24,6 @@ public class LineComparator implements OutputComparator {
         return "Khớp";
     }
 
-    /**
-     * Chuẩn hóa xuống dòng, bỏ khoảng trắng cuối mỗi dòng và bỏ các dòng rỗng cuối output.
-     */
     private List<String> lines(String s) {
         List<String> result = new ArrayList<>();
         if (s == null) return result;

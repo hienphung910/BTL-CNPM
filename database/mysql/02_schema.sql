@@ -1,31 +1,5 @@
--- =====================================================================
---  CodeHub - luoc do bang cho MySQL 8
--- =====================================================================
---  Day la BAN THAM CHIEU, giong het nhung gi lop
---  com.ptit.oj.dao.MySqlSchemaInitializer tu chay luc khoi dong.
---  Chay tay cung duoc (khong bat buoc):
---
---      mysql -u oj_app -p online_judge < database/mysql/02_schema.sql
---
---  Chay lai bao nhieu lan cung an toan va KHONG lam mat du lieu cu:
---  bang dung CREATE TABLE IF NOT EXISTS, view thi kiem tra truoc khi tao.
---  Index duoc khai bao ngay trong CREATE TABLE, vi MySQL khong ho tro
---  CREATE INDEX IF NOT EXISTS.
--- =====================================================================
-
--- Tren Windows, mysql.exe mac dinh khai bao charset ket noi la codepage cua
--- console (cp850/cp437). Khi do MySQL gan nhan charset do cho moi chuoi trong
--- file, va CHECK_CLAUSE se luu thanh _cp850'STUDENT' thay vi 'STUDENT'.
--- Khong sai ket qua nhung ban do lech charset va co the gay loi so sanh
--- collation ve sau. Mot dong SET NAMES sua dut diem.
 SET NAMES utf8mb4;
 
--- ---------------------------------------------------------------------
---  users - tai khoan he thong
--- ---------------------------------------------------------------------
---  username dung collation utf8mb4_0900_ai_ci (accent-insensitive,
---  case-insensitive) nen rang buoc UNIQUE tu dong coi "Admin" va "admin"
---  la trung nhau - thay cho COLLATE NOCASE cua SQLite.
 CREATE TABLE IF NOT EXISTS users (
     id                  VARCHAR(64)  NOT NULL,
     username            VARCHAR(32)  NOT NULL,
@@ -45,12 +19,6 @@ CREATE TABLE IF NOT EXISTS users (
   DEFAULT CHARACTER SET = utf8mb4
   COLLATE = utf8mb4_0900_ai_ci;
 
--- ---------------------------------------------------------------------
---  submissions - lich su nop bai
--- ---------------------------------------------------------------------
---  problem_title va max_points la BAN CHUP tai thoi diem nop: de bai co
---  doi ten hay bi xoa khoi data/problems/ thi lich su cu van doc dung.
---  source_code luu ma nguon that nen xoa file goc van xem lai duoc.
 CREATE TABLE IF NOT EXISTS submissions (
     id             VARCHAR(64)         NOT NULL,
     user_id        VARCHAR(64)         NOT NULL,
@@ -79,12 +47,6 @@ CREATE TABLE IF NOT EXISTS submissions (
   DEFAULT CHARACTER SET = utf8mb4
   COLLATE = utf8mb4_0900_ai_ci;
 
--- ---------------------------------------------------------------------
---  test_case_results - ket qua cham cua tung test
--- ---------------------------------------------------------------------
---  ON DELETE CASCADE: xoa mot bai nop la ket qua test bay theo, khong con
---  ban ghi mo coi. InnoDB thuc thi rang buoc nay that su (khac SQLite,
---  noi phai bat PRAGMA foreign_keys o tung ket noi).
 CREATE TABLE IF NOT EXISTS test_case_results (
     submission_id VARCHAR(64)     NOT NULL,
     test_case_id  VARCHAR(100)    NOT NULL,
@@ -103,18 +65,6 @@ CREATE TABLE IF NOT EXISTS test_case_results (
   DEFAULT CHARACTER SET = utf8mb4
   COLLATE = utf8mb4_0900_ai_ci;
 
--- ---------------------------------------------------------------------
---  user_stats - so bai da giai, tinh lai tu du lieu that
--- ---------------------------------------------------------------------
---  CO Y khong them cot solved_count vao bang users: mot cot nhu the phai
---  cap nhat bang tay o moi cho ghi du lieu va se lech ngay khi quen mot cho.
---  VIEW nay tinh lai moi lan doc nen luon dung theo dinh nghia:
---      so bai da giai = COUNT(DISTINCT problem_id) voi verdict = 'AC'
---  => nop AC 5 lan cho cung mot bai van chi tinh la 1.
---  MySQL khong co "CREATE VIEW IF NOT EXISTS", con "CREATE OR REPLACE VIEW"
---  lai doi hoi quyen DROP - ma tai khoan oj_app CO Y khong duoc cap quyen do
---  tren CSDL that. Vi vay hoi information_schema truoc roi chi tao khi thieu.
---  Lop MySqlSchemaInitializer trong Java lam dung y het nhu doan nay.
 SET @user_stats_exists = (
     SELECT COUNT(*) FROM information_schema.views
      WHERE table_schema = DATABASE() AND table_name = 'user_stats');

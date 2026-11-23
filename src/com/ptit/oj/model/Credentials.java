@@ -1,7 +1,6 @@
 package com.ptit.oj.model;
 
 public class Credentials {
-
     private String hashBase64;
     private String saltBase64;
     private int iterations;

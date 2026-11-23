@@ -6,7 +6,6 @@ import com.ptit.oj.model.User;
 import java.util.Map;
 
 public interface UserRepository extends Repository<User> {
-
     User findByUsername(String username);
 
     boolean existsByUsername(String username);

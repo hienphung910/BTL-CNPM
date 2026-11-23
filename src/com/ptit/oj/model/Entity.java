@@ -2,9 +2,7 @@ package com.ptit.oj.model;
 
 import java.util.Objects;
 
-/** Lop cha truu tuong cho moi thuc the co ma dinh danh trong he thong. */
 public abstract class Entity {
-
     private String id;
 
     protected Entity(String id) {
@@ -18,7 +16,6 @@ public abstract class Entity {
         return id;
     }
 
-    /** Hai thuc the bang nhau khi cung lop va cung ma - can cho viec gom bai nop theo nguoi dung. */
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

@@ -22,27 +22,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-/**
- * Kho lich su nop bai luu trong MySQL 8.
- *
- * Diem dang chu y:
- *  - saveWithResults() ghi bang submissions va test_case_results trong MOT
- *    transaction: hoac ca hai cung vao, hoac rollback sach. Khong bao gio ton tai
- *    bai nop thieu mat ket qua test.
- *  - Khi doc lai, bai nop duoc dung lai thanh doi tuong Submission + JudgeResult
- *    day du, nen ScoreboardService / giao dien khong can biet du lieu tu dau ra.
- *  - Neu de bai da bi xoa khoi o dia, van dung lai duoc mot Problem tu ban chup
- *    (problem_title, max_points, danh sach test da cham) de lich su cu khong vo.
- *
- * Ghi chu ve MySQL:
- *  - Ghi de bang INSERT ... ON DUPLICATE KEY UPDATE (khong phai ON CONFLICT).
- *  - Sap xep bang (submitted_at, id) - MySQL khong co rowid an nhu SQLite.
- *  - DECIMAL doc/ghi bang BigDecimal, DATETIME(6) bang LocalDateTime,
- *    BOOLEAN bang setBoolean/getBoolean, COUNT va BIGINT bang long.
- */
 public class MySqlSubmissionRepository implements SubmissionRepository {
-
-    /** So tham so toi da cho mot cau IN (...) - chia lo de khong dung gioi han cua may chu. */
     private static final int IN_CHUNK = 400;
 
     private static final String COLUMNS =
@@ -64,20 +44,11 @@ public class MySqlSubmissionRepository implements SubmissionRepository {
         this.languages = languages;
     }
 
-    // ------------------------------------------------------------------ ghi
-
     @Override
     public void save(Submission submission) {
         saveWithResults(submission);
     }
 
-    /**
-     * Ghi bai nop + toan bo ket qua test trong MOT giao dich.
-     *
-     * Cac buoc: mo ket noi -> setAutoCommit(false) -> ghi submissions ->
-     * xoa het ket qua test cu cua bai nop nay (bo cac test khong con ton tai)
-     * -> ghi lai toan bo ket qua test moi -> commit. Bat ky loi nao cung rollback.
-     */
     @Override
     public void saveWithResults(Submission submission) {
         if (submission == null) throw new IllegalArgumentException("Không được lưu entity null");
@@ -113,7 +84,7 @@ public class MySqlSubmissionRepository implements SubmissionRepository {
         Connection c = null;
         try {
             c = database.open();
-            c.setAutoCommit(false);                     // mo transaction
+            c.setAutoCommit(false);
 
             try (PreparedStatement ps = c.prepareStatement(insertSubmission)) {
                 ps.setString(1, submission.getId());
@@ -133,7 +104,6 @@ public class MySqlSubmissionRepository implements SubmissionRepository {
                 ps.executeUpdate();
             }
 
-            // Bo cac ket qua test cu khong con ton tai (vi du bai duoc cham lai voi bo test khac).
             try (PreparedStatement ps = c.prepareStatement(deleteOldTests)) {
                 ps.setString(1, submission.getId());
                 ps.executeUpdate();
@@ -168,7 +138,6 @@ public class MySqlSubmissionRepository implements SubmissionRepository {
 
     @Override
     public boolean deleteById(String id) {
-        // test_case_results co ON DELETE CASCADE nen tu bay theo (InnoDB thuc thi that su).
         try (Connection c = database.open();
              PreparedStatement ps = c.prepareStatement("DELETE FROM submissions WHERE id = ?")) {
             ps.setString(1, id);
@@ -177,8 +146,6 @@ public class MySqlSubmissionRepository implements SubmissionRepository {
             throw new DataAccessException("Không xoá được bài nộp " + id, e);
         }
     }
-
-    // ------------------------------------------------------------------ doc
 
     @Override
     public Submission findById(String id) {
@@ -218,13 +185,6 @@ public class MySqlSubmissionRepository implements SubmissionRepository {
         }
     }
 
-    // --------------------------------------------------------- dung lai object
-
-    /**
-     * Doc CSDL roi dung lai doi tuong. Lam hai buoc de khong mo ResultSet long nhau:
-     *   1. doc het bang submissions vao danh sach Row,
-     *   2. doc mot lan toan bo test_case_results cua cac bai nop do (tranh N+1 query).
-     */
     private List<Submission> query(String sql, String param) {
         List<Row> rows = new ArrayList<>();
         try (Connection c = database.open(); PreparedStatement ps = c.prepareStatement(sql)) {
@@ -244,7 +204,7 @@ public class MySqlSubmissionRepository implements SubmissionRepository {
         for (Row r : rows) {
             List<TestRow> testRows = testsBySubmission.get(r.id);
             if (testRows == null) {
-                testRows = new ArrayList<>();      // bai nop khong co ket qua test nao (vi du CE)
+                testRows = new ArrayList<>();
             }
             Submission s = build(r, testRows);
             if (s != null) list.add(s);
@@ -254,7 +214,7 @@ public class MySqlSubmissionRepository implements SubmissionRepository {
 
     private Submission build(Row row, List<TestRow> testRows) {
         User author = users.findById(row.userId);
-        if (author == null) return null;        // tai khoan da bi xoa -> bo qua dong nay
+        if (author == null) return null;
 
         Problem problem = problems.findById(row.problemId);
         if (problem == null) {
@@ -276,17 +236,14 @@ public class MySqlSubmissionRepository implements SubmissionRepository {
         for (TestRow t : testRows) {
             TestCase tc = findTestCase(problem, t.testCaseId);
             if (tc == null) {
-                // De bai da doi ten test -> dung lai mot TestCase toi thieu de van xem duoc lich su.
                 tc = new TestCase(t.testCaseId, "", "", t.earnedPoints, t.sample);
             }
             result.addTestResult(new TestCaseResult(tc, t.verdict, t.runtimeMs, t.earnedPoints, t.message));
         }
 
         if (testRows.isEmpty()) {
-            // CE / IE: khong chay test nao nen verdict la loi toan cuc.
             result.markGlobal(row.verdict == null ? Verdict.IE : row.verdict, row.globalMessage);
         } else if (row.verdict != null && result.getOverallVerdict() != row.verdict) {
-            // Du lieu cu bi sua tay: lay verdict trong CSDL lam chuan.
             result.markGlobal(row.verdict, row.globalMessage);
         }
 
@@ -294,10 +251,6 @@ public class MySqlSubmissionRepository implements SubmissionRepository {
         return s;
     }
 
-    /**
-     * De bai khong con tren o dia -> dung lai tu ban chup de bang diem va lich su
-     * van hien thi dung ten bai va tong diem cu.
-     */
     private Problem rebuildProblem(Row row, List<TestRow> testRows) {
         Problem p = new Problem(row.problemId, row.problemTitle, "", 0, 0, "token");
         int n = testRows.size();
@@ -308,7 +261,6 @@ public class MySqlSubmissionRepository implements SubmissionRepository {
         return p;
     }
 
-    /** Doc ket qua test cua nhieu bai nop bang mot so it cau IN (...) thay vi moi bai mot cau. */
     private Map<String, List<TestRow>> loadTestRows(List<String> submissionIds) {
         Map<String, List<TestRow>> byId = new LinkedHashMap<>();
         if (submissionIds.isEmpty()) return byId;
@@ -373,7 +325,6 @@ public class MySqlSubmissionRepository implements SubmissionRepository {
         return null;
     }
 
-    /** Mot dong cua bang submissions, doc thoi ra khoi ResultSet. */
     private static class Row {
         private String id;
         private String userId;
@@ -389,7 +340,6 @@ public class MySqlSubmissionRepository implements SubmissionRepository {
         private String globalMessage;
     }
 
-    /** Mot dong cua bang test_case_results. */
     private static class TestRow {
         private String testCaseId;
         private boolean sample;
@@ -399,13 +349,6 @@ public class MySqlSubmissionRepository implements SubmissionRepository {
         private String message;
     }
 
-    // ------------------------------------------------------------- tien ich
-
-    /**
-     * DATETIME(6) doc bang LocalDateTime chu khong phai Timestamp: Timestamp la
-     * mot moc thoi gian tuyet doi nen driver se quy doi theo serverTimezone va
-     * lam lech gio hien thi; LocalDateTime giu dung gia tri nhu trong CSDL.
-     */
     private static LocalDateTime readDateTime(ResultSet rs, String column) throws SQLException {
         LocalDateTime value = rs.getObject(column, LocalDateTime.class);
         return value == null ? LocalDateTime.now() : value;
@@ -437,7 +380,6 @@ public class MySqlSubmissionRepository implements SubmissionRepository {
         try {
             c.rollback();
         } catch (SQLException ignored) {
-            // ket noi da hong thi cung khong con gi de cuu
         }
     }
 
@@ -446,12 +388,10 @@ public class MySqlSubmissionRepository implements SubmissionRepository {
         try {
             c.setAutoCommit(true);
         } catch (SQLException ignored) {
-            // bo qua
         }
         try {
             c.close();
         } catch (SQLException ignored) {
-            // bo qua
         }
     }
 }

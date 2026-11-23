@@ -16,20 +16,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-/**
- * Diem vao chuong trinh: nap du lieu roi mo cua so dang nhap.
- *
- * Cach chay (tu thu muc goc cua project, noi co folder data):
- *   java -cp "out;lib/*" com.ptit.oj.Main            -> tai khoan va bai nop luu vao MySQL
- *   java -cp out com.ptit.oj.Main --no-db            -> khong can MySQL, du lieu nam trong RAM
- *
- * Cau hinh MySQL lay tu BIEN MOI TRUONG hoac file .env (xem .env.example):
- *   OJ_DB_URL / OJ_DB_USER / OJ_DB_PASSWORD
- * Mat khau KHONG BAO GIO nhan qua dong lenh de khong bi luu vao lich su shell.
- */
 public class Main {
-
-    /** Mat khau cua cac tai khoan mau, chi dung lan dau khi chua co tai khoan nao. */
     private static final String SEED_PASSWORD_ENV = "OJ_SEED_PASSWORD";
     private static final String DEFAULT_SEED_PASSWORD = "ptit@2026";
 
@@ -74,21 +61,15 @@ public class Main {
         }
     }
 
-    /** Mo cua so dang nhap, dung kieu giao dien cua he dieu hanh. */
     private static void openLoginWindow(JudgeService service) {
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         } catch (Exception ignored) {
-            // khong doi duoc giao dien he dieu hanh thi dung giao dien mac dinh cua Swing
         }
         LoginView loginView = new LoginView(service);
         loginView.setVisible(true);
     }
 
-    /**
-     * Doc cau hinh tu bien moi truong, mo ket noi va kiem tra bang SELECT 1.
-     * Tra ve null (kem huong dan) neu thieu cau hinh hoac khong ket noi duoc.
-     */
     private static MySqlDatabaseManager connectToMySql() {
         DatabaseConfig config;
         try {
@@ -112,7 +93,6 @@ public class Main {
         return database;
     }
 
-    /** Lan chay dau tien (chua co tai khoan nao): tao cac tai khoan mau de dang nhap thu. */
     private static void prepareAccounts(JudgeService service) {
         String seedPassword = System.getenv(SEED_PASSWORD_ENV);
         if (seedPassword == null || seedPassword.trim().isEmpty()) {
@@ -125,12 +105,10 @@ public class Main {
         }
     }
 
-    /** Bat buoc stdout dung UTF-8 de khong bi loi font khi in tieng Viet tren Windows. */
     private static void forceUtf8Output() {
         try {
             System.setOut(new PrintStream(new FileOutputStream(FileDescriptor.out), true, "UTF-8"));
         } catch (UnsupportedEncodingException ignored) {
-            // moi JVM deu ho tro UTF-8, nhung neu that bai thi cu dung stdout mac dinh
         }
     }
 }
